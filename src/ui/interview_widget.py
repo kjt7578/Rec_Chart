@@ -19,7 +19,6 @@ class AutoResizeTextEdit(QTextEdit):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textChanged.connect(self.adjust_height)
         self.setMinimumHeight(50)  # 최소 높이
-        self.setMaximumHeight(300) # 최대 높이 제한
         
     def adjust_height(self):
         """텍스트 내용에 따라 높이 자동 조절"""
@@ -28,8 +27,8 @@ class AutoResizeTextEdit(QTextEdit):
         doc.setTextWidth(self.viewport().width())
         height = doc.size().height() + 10  # 여백 추가
         
-        # 최소/최대 높이 제한 적용
-        height = max(50, min(300, int(height)))
+        # 최소 높이 제한 적용
+        height = max(50, int(height))
         self.setFixedHeight(height)
         
     def resizeEvent(self, event):
@@ -88,9 +87,8 @@ class CategoryNoteWidget(QFrame):
                 border-radius: 4px;
                 padding: 8px;
                 font-family: 'Malgun Gothic', sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 background-color: #ffffff;
-                line-height: 1.4;
             }
         """)
         self.content_edit.textChanged.connect(self.on_content_changed)
