@@ -631,14 +631,20 @@ CRITICAL RULE: You MUST distinguish between interviewer and candidate statements
             categories_str = ", ".join(categories)
             
             # 영어 전용 분류 프롬프트
-            quick_prompt = f"""
-Please categorize the following interview text into the most appropriate category and provide a brief summary in ENGLISH ONLY:
+            quick_prompt = f"""Please categorize the following interview text into the most appropriate category based on the definitions below and provide a brief summary in ENGLISH ONLY.
 
-Available Categories: {categories_str}
+**--- CATEGORY DEFINITIONS ---**
 
-Interview Text:
+*   **`Expertise`**: Core professional skills, specific accomplishments, and direct job-related experiences. (e.g., "Managed payroll for 500 employees," "Developed a new sales pipeline.")
+*   **`Industry/Product/Technical Familiarity`**: Knowledge of the specific industry, markets, products, or technologies. (e.g., "Familiar with the automotive sector," "Experience with SAP and Workday.")
+*   **`Leadership/Cultural Fit`**: Leadership style, team collaboration, and adaptability to the work environment. (e.g., "Led a team of 5 engineers," "Comfortable in a fast-paced startup.")
+*   **`Motivation/Reason for Interest`**: Why the candidate is seeking a new role and their interest in this specific company. (e.g., "Seeking more growth opportunities," "Attracted to the company's mission.")
+*   **`Logistics`**: Practical details like salary, location, and availability. (e.g., "Looking for $120K base," "Can start in 2 weeks.")
+
+**--- INTERVIEW TEXT ---**
 {text}
 
+**--- RESPONSE FORMAT (JSON) ---**
 Response in JSON format (ALL TEXT MUST BE IN ENGLISH):
 {{
     "Category_Name": {{
@@ -646,54 +652,17 @@ Response in JSON format (ALL TEXT MUST BE IN ENGLISH):
     }}
 }}
 
-CRITICAL REQUIREMENTS:
-- ALL output text must be in English only
-- **CAPTURE BOTH OBJECTIVE FACTS AND SUBJECTIVE EXPRESSIONS** (emotions, motivations, values, thoughts)
-- Include candidate's feelings, beliefs, goals, and personal perspectives
-- Do not ignore emotional expressions like "passionate", "excited", "believe", "value"
-- Each summary should be 1-2 sentences in clear English
-- Do not include meaningless phrases like "no information provided", "not mentioned", "not applicable"
-- **NEVER write meta-commentary** about text quality like "appears garbled", "does not provide meaningful information", "analysis incomplete"
-- **IF NO CONCRETE INFORMATION EXISTS FOR A CATEGORY, SIMPLY SKIP THAT CATEGORY**
-- Focus on professional recruitment context only
-- **USE DIVERSE PROFESSIONAL SENTENCE STARTERS** - avoid repetitive "Experienced in..." patterns
-- Keep summaries concise and action-oriented
-- **Use specific numbers when mentioned** (e.g., "3-year" instead of "multi-year")
-- **ONLY include categories that have actual concrete information OR meaningful emotional/motivational content**
-- **RESUME-STYLE BULLET POINTS**: Start directly with action verbs, NO SUBJECTS (he/she/candidate/Greg)
-- **Remove all subjects like "Greg", "He", "She", "The candidate", "Candidate"**
-- **Also remove**: "Currently", "Previously", "Has", "Is" at the beginning
-- **Start with verbs**: "Manages", "Oversees", "Led", "Developed", "Values", "Seeks", "Serves", "Works", etc.
-- **Remove weak starters**: "Currently serves" → "Serves", "Has experience" → "Experienced", "Is responsible" → "Responsible"
-
-**ENHANCED SENTENCE STARTER TEMPLATES (including emotions/motivations):**
-💼 **Career & Role**: Has led/managed/overseen/directed/supported... | Served as... | Functioned as... | Previously worked in... | Held the position of... | Played a key role in... | Was responsible for... | Took ownership of...
-
-⚙️ **Skills & Systems**: Demonstrated expertise in... | Proficient in using... | Skilled in handling... | Well-versed in... | Has utilized... | Hands-on experience with... | Administered... | Implemented and maintained...
-
-📈 **Performance & Strategy**: Successfully implemented... | Consistently delivered results in... | Improved processes related to... | Streamlined operations by... | Achieved measurable outcomes in... | Spearheaded efforts to... | Played a critical role in optimizing...
-
-🎯 **Emotions & Motivations**: Expresses passion for... | Shows enthusiasm about... | Motivated by... | Values... | Believes in... | Seeks opportunities to... | Driven by... | Committed to... | Excited about...
-
-🌟 **Personal Values & Goals**: Prioritizes... | Aspires to... | Focuses on... | Emphasizes... | Aims to achieve... | Values work-life... | Seeks growth in... | Committed to improving...
-
-🤝 **Cultural Fit & Teamwork**: Enjoys collaborating with... | Thrives in environments that... | Prefers working with... | Values transparency and... | Believes in empowering... | Appreciates... | Seeks companies that...
-
-🧭 **Leadership Philosophy**: Leads with... | Believes leadership should... | Approaches management by... | Values in team leadership... | Emphasizes in leadership style... | Guides teams through...
-
-EXAMPLES (resume-style bullet points without subjects):
-✅ Good: "Manages HR operations for 700+ employees across 4 sites in 3 states"
-✅ Good: "Seeks $120K base salary with relocation flexibility to Savannah"
-✅ Good: "Led successful union contract negotiations and grievance resolution"
-✅ Good: "Expresses passion for automotive industry and innovation-focused opportunities"
-✅ Good: "Values transparency and believes in empowering team members for collective success"
-✅ Good: "Motivated by complex problem-solving challenges and professional development opportunities"
-❌ Avoid: "Currently serves as HR Manager..." (weak starter)
-❌ Avoid: "Has prior experience in automotive..." (weak starter)
-❌ Avoid: "Greg manages payroll operations..." (includes subject)
-❌ Avoid: "He has 5+ years of experience..." (includes subject)
-❌ Avoid: "The candidate is seeking..." (includes subject)
-❌ Avoid: "No specific information provided" (meaningless content)
+**--- CRITICAL REQUIREMENTS ---**
+- **Adhere strictly to the category definitions above.**
+- **ALL output text must be in English only.**
+- **CAPTURE BOTH OBJECTIVE FACTS AND SUBJECTIVE EXPRESSIONS** (emotions, motivations, values, thoughts).
+- **USE RESUME-STYLE BULLET POINTS**: Start directly with action verbs, NO SUBJECTS (he/she/candidate).
+    - ✅ Good: "Manages HR operations for 700+ employees."
+    - ✅ Good: "Expresses passion for the automotive industry."
+    - ❌ Avoid: "He manages HR operations..."
+- **IF NO CONCRETE INFORMATION EXISTS FOR A CATEGORY, SIMPLY SKIP THAT CATEGORY.**
+- Use specific numbers when mentioned (e.g., "3-year" instead of "multi-year").
+- Keep summaries concise and action-oriented.
 """
             
             response = self.client.chat.completions.create(
