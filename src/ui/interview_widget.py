@@ -717,21 +717,50 @@ class InterviewWidget(QWidget):
         # 스크롤 컨텐츠 위젯
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout(scroll_content)
-        scroll_layout.setSpacing(4)  # 간격 축소
+        scroll_layout.setSpacing(6)  # 간격 조정
         scroll_layout.setContentsMargins(2, 2, 2, 2)  # 여백 최소화
         
-        # 각 카테고리별 노트 위젯 생성
-        for category in self.template["screening_categories"]:
-            category_widget = CategoryNoteWidget(category)
-            category_widget.content_changed.connect(self.update_category_status)
-            self.category_widgets[category] = category_widget
-            scroll_layout.addWidget(category_widget)
+        # 2열 구조 메인 컨테이너
+        main_grid = QHBoxLayout()
+        main_grid.setSpacing(8)
+        
+        # 좌측 열
+        left_column = QVBoxLayout()
+        left_column.setSpacing(6)
+        
+        # 우측 열
+        right_column = QVBoxLayout()
+        right_column.setSpacing(6)
+        
+        # 카테고리들을 2열로 분배
+        all_categories = self.template["screening_categories"] + ["🔍 기타 중요 정보"]
+        
+        for i, category in enumerate(all_categories):
+            if category == "🔍 기타 중요 정보":
+                category_widget = CategoryNoteWidget("🔍 기타 중요 정보")
+                self.other_widget = category_widget
+                self.category_widgets["Other"] = category_widget
+            else:
+                category_widget = CategoryNoteWidget(category)
+                self.category_widgets[category] = category_widget
             
-        # 기타(Other) 섹션
-        self.other_widget = CategoryNoteWidget("🔍 기타 중요 정보")
-        self.other_widget.content_changed.connect(self.update_category_status)
-        self.category_widgets["Other"] = self.other_widget
-        scroll_layout.addWidget(self.other_widget)
+            category_widget.content_changed.connect(self.update_category_status)
+            
+            # 좌우 교대로 배치
+            if i % 2 == 0:
+                left_column.addWidget(category_widget)
+            else:
+                right_column.addWidget(category_widget)
+        
+        # 좌우 균형 맞추기 (빈 공간 추가)
+        left_column.addStretch()
+        right_column.addStretch()
+        
+        # 좌우 열을 메인 그리드에 추가
+        main_grid.addLayout(left_column)
+        main_grid.addLayout(right_column)
+        
+        scroll_layout.addLayout(main_grid)
         
         scroll_layout.addStretch()
         scroll_area.setWidget(scroll_content)
