@@ -307,13 +307,31 @@ Candidate: I'm experienced with SAP SuccessFactors, Workday, and I have certific
 
 Output: {{"category": "Technical Skills", "note": "Hands-on with SAP SuccessFactors and Workday; certified in Project Management."}}
 
+**Example 3: Short Answer with Context**
+Conversation:
+{interviewer_name}: Are you open to relocate?
+Candidate: Yes, absolutely
+
+Output: {{"category": "Relocation/Work Mode", "note": "Willing to relocate based on interviewer question about relocation openness."}}
+
+**Example 4: Multiple Short Answers**
+Conversation:
+{interviewer_name}: Are you comfortable with onsite work?
+Candidate: Yes, definitely
+{interviewer_name}: What about overtime when needed?
+Candidate: No problem, I understand the demands
+
+Output: {{"category": "Relocation/Work Mode", "note": "Comfortable with onsite work and overtime when needed."}}
+
 **📋 Sentence Construction Principles:**
 - Extract ONLY from candidate responses, never from interviewer statements
-- Be specific (avoid vague terms without context)
+- For short answers (Yes/No), ALWAYS use interviewer's question as context to explain what the answer refers to
+- Be specific (avoid vague terms without context) 
 - Include numeric values whenever possible (years, salary, team size, etc.)
 - Avoid repeating the same content
 - Do not abbreviate key technical terms (e.g., always write "SAP SuccessFactors" in full)
 - One sentence per key idea
+- When candidate gives brief responses, interpret them in context of interviewer's question
 
 **If the candidate content is not important or not applicable, respond with "Not Applicable".**
 
@@ -334,12 +352,13 @@ Your expertise:
 - Analyzing interview conversations between interviewer ({interviewer_name}) and candidate
 - Creating structured summaries ONLY from candidate responses
 - Completely ignoring interviewer statements when building candidate profiles
+- **CONTEXT INTERPRETATION**: When candidates give short answers (Yes/No/brief responses), use interviewer's question as context to understand what the answer means
 - Following exact sentence construction principles for enterprise recruitment
 - Using recommended templates for consistency across all candidates
 - Ensuring technical terms are accurate and complete (no abbreviations)
 - Focusing on English interview context and North American business standards
 
-CRITICAL RULE: You MUST distinguish between interviewer and candidate statements. NEVER include interviewer's background, experience, or statements as part of the candidate's profile."""},
+CRITICAL RULE: You MUST distinguish between interviewer and candidate statements. NEVER include interviewer's background, experience, or statements as part of the candidate's profile. However, USE interviewer questions as context to interpret candidate's short answers."""},
                     {"role": "user", "content": speaker_aware_prompt}
                 ],
                 max_tokens=800,
